@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Форма регистрации</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #1a1a2e;
+            --bg-secondary: #16213e;
+            --bg-input: #0f3460;
+            --text-primary: #e6e6e6;
+            --text-secondary: #a0a0a0;
+            --accent: #e94560;
+            --accent-hover: #ff6b6b;
+            --success: #4ade80;
+            --error: #f87171;
+            --border: #2a2a4a;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+            background: var(--bg-secondary);
+            padding: 30px 40px;
+            border-radius: 16px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+            border: 1px solid var(--border);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: var(--accent);
+            font-weight: 600;
+        }
+
+        .form-group { margin-bottom: 24px; }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        label.required::after {
+            content: " *";
+            color: var(--error);
+        }
+
+        input[type="text"],
+        input[type="tel"],
+        input[type="email"],
+        input[type="date"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 12px 16px;
+            background: var(--bg-input);
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        input.error, select.error, textarea.error {
+            border-color: var(--error);
+        }
+
+        .error-message {
+            color: var(--error);
+            font-size: 0.875rem;
+            margin-top: 6px;
+            display: none;
+        }
+
+        .error-message.show { display: block; }
+
+        .radio-group, .checkbox-group {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .radio-option, .checkbox-option {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+
+        .radio-option input, .checkbox-option input {
+            width: auto;
+            cursor: pointer;
+        }
+
+        select[multiple] {
+            min-height: 120px;
+            padding: 8px;
+        }
+
+        select[multiple] option {
+            padding: 8px;
+            background: var(--bg-input);
+            border-radius: 4px;
+            margin: 2px 0;
+        }
+
+        select[multiple] option:checked {
+            background: var(--accent);
+        }
+
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .checkbox-label {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            cursor: pointer;
+        }
+
+        .checkbox-label input { margin-top: 4px; width: auto; }
+
+        button[type="submit"] {
+            width: 100%;
+            padding: 14px;
+            background: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+            font-family: inherit;
+        }
+
+        button[type="submit"]:hover {
+            background: var(--accent-hover);
+        }
+
+        .hint {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-top: 4px;
+        }
+
+        @media (max-width: 600px) {
+            .container { padding: 20px 25px; }
+            .radio-group, .checkbox-group { flex-direction: column; gap: 12px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1> Регистрация</h1>
+        
+        <form method="POST" action="/" novalidate>
+            <div class="form-group">
+                <label for="fio" class="required">ФИО</label>
+                <input 
+                    type="text" 
+                    id="fio" 
+                    name="fio" 
+                    value="{{.Data.FIO}}"
+                    placeholder="Иванов Иван Иванович"
+                    class="{{if .Errors.fio}}error{{end}}"
+                    pattern="^[a-zA-Zа-яА-Я\s\-']+$"
+                    maxlength="150"
+                    required
+                >
+                <div class="hint">Только буквы, пробелы, дефис и апостроф (макс. 150 символов)</div>
+                <span class="error-message error-fio {{if .Errors.fio}}show{{end}}">{{.Errors.fio}}</span>
+            </div>
+            {{ if .Success }}
+                <div class="success-message" style="
+                        background: rgba(74, 222, 128, 0.15);
+                        border: 1px solid var(--success);
+                        border-radius: 8px;
+                        padding: 16px 20px;
+                        margin-bottom: 24px;
+                        color: var(--success);
+                        text-align: center;
+                        font-weight: 500;
+                        animation: fadeIn 0.3s ease;
+                                ">
+                ✅ {{ .Success }}
+                <div style="margin-top: 8px; font-size: 0.9rem; opacity: 0.9;">
+                    <a href="/" style="color: inherit; text-decoration: none; border-bottom: 1px dashed currentColor;">
+                        ← Заполнить ещё одну форму
+                    </a>
+                </div>
+            </div>
+            {{ end }}
+            <div class="form-group">
+                <label for="phone" class="required">Телефон</label>
+                <input 
+                    type="tel" 
+                    id="phone" 
+                    name="phone" 
+                    value="{{.Data.PhoneNumber}}"
+                    placeholder="+79991234567"
+                    class="{{if .Errors.phone}}error{{end}}"
+                    pattern="^\+?[0-9]{10,15}$"
+                    required
+                >
+                <div class="hint">10–15 цифр, можно с + в начале</div>
+                <span class="error-message error-phone {{if .Errors.phone}}show{{end}}">{{.Errors.phone}}</span>
+            </div>
+            <div class="form-group">
+                <label for="email" class="required">E-mail</label>
+                <input 
+                    type="email" 
+                    id="email" 
+                    name="email" 
+                    value="{{.Data.Email}}"
+                    placeholder="user@example.com"
+                    class="{{if .Errors.email}}error{{end}}"
+                    required
+                >
+                <span class="error-message error-email {{if .Errors.email}}show{{end}}">{{.Errors.email}}</span>
+            </div>
+            <div class="form-group">
+                <label for="birthdate" class="required">Дата рождения</label>
+                <input 
+                    type="date" 
+                    id="birthdate" 
+                    name="birthdate" 
+                    value="{{if not .Data.Dateofb.IsZero}}{{.Data.Dateofb.Format "2006-01-02"}}{{end}}"
+                    class="{{if .Errors.birthdate}}error{{end}}"
+                    required
+                >
+                <span class="error-message error-birthdate {{if .Errors.birthdate}}show{{end}}">{{.Errors.birthdate}}</span>
+            </div>
+            <div class="form-group">
+                <label class="required">Пол</label>
+                <div class="radio-group">
+                    <label class="radio-option">
+                        <input 
+                            type="radio" 
+                            name="gender" 
+                            value="male"
+                            {{if eq .Data.Gender "male"}}checked{{end}}
+                            required
+                        >
+                        Мужской
+                    </label>
+                    <label class="radio-option">
+                        <input 
+                            type="radio" 
+                            name="gender" 
+                            value="female"
+                            {{if eq .Data.Gender "female"}}checked{{end}}
+                            required
+                        >
+                        Женский
+                    </label>
+                </div>
+                <span class="error-message error-gender {{if .Errors.gender}}show{{end}}">{{.Errors.gender}}</span>
+            </div>
+            <div class="form-group">
+                <label for="languages" class="required">Любимые языки программирования</label>
+                <select 
+                    id="languages" 
+                    name="languages" 
+                    multiple
+                    class="{{if .Errors.languages}}error{{end}}"
+                    required
+                >
+                    <option value="Pascal" {{if contains .Data.Favlanguages "Pascal"}}selected{{end}}>Pascal</option>
+                    <option value="C" {{if contains .Data.Favlanguages "C"}}selected{{end}}>C</option>
+                    <option value="C++" {{if contains .Data.Favlanguages "C++"}}selected{{end}}>C++</option>
+                    <option value="JavaScript" {{if contains .Data.Favlanguages "JavaScript"}}selected{{end}}>JavaScript</option>
+                    <option value="PHP" {{if contains .Data.Favlanguages "PHP"}}selected{{end}}>PHP</option>
+                    <option value="Python" {{if contains .Data.Favlanguages "Python"}}selected{{end}}>Python</option>
+                    <option value="Java" {{if contains .Data.Favlanguages "Java"}}selected{{end}}>Java</option>
+                    <option value="Haskell" {{if contains .Data.Favlanguages "Haskell"}}selected{{end}}>Haskell</option>
+                    <option value="Clojure" {{if contains .Data.Favlanguages "Clojure"}}selected{{end}}>Clojure</option>
+                    <option value="Prolog" {{if contains .Data.Favlanguages "Prolog"}}selected{{end}}>Prolog</option>
+                    <option value="Scala" {{if contains .Data.Favlanguages "Scala"}}selected{{end}}>Scala</option>
+                    <option value="Go" {{if contains .Data.Favlanguages "Go"}}selected{{end}}>Go</option>
+                </select>
+                <div class="hint">Удерживайте Ctrl (Cmd на Mac) для выбора нескольких</div>
+                <span class="error-message error-languages {{if .Errors.languages}}show{{end}}">{{.Errors.languages}}</span>
+            </div>
+            <div class="form-group">
+                <label for="biography">Биография</label>
+                <textarea 
+                    id="biography" 
+                    name="biography" 
+                    placeholder="Расскажите немного о себе..."
+                    maxlength="1000"
+                    class="{{if .Errors.bio}}error{{end}}"
+                >{{.Data.Biography}}</textarea>
+                <div class="hint">Максимум 1000 символов</div>
+                <span class="error-message error-bio {{if .Errors.bio}}show{{end}}">{{.Errors.bio}}</span>
+            </div>
+            <div class="form-group">
+                <label class="checkbox-label required">
+                    <input 
+                        type="checkbox" 
+                        name="accepted" 
+                        value="true"
+                        {{if .Data.Accepted}}checked{{end}}
+                    >
+                    <span>Я ознакомлен(а) с условиями обработки персональных данных и соглашаюсь с контрактом</span>
+                </label>
+                <span class="error-message error-accepted {{if .Errors.accepted}}show{{end}}">{{.Errors.accepted}}</span>
+            </div>
+            <button type="submit">💾 Сохранить</button>
+        </form>
+    </div>
+
+    <script>
+        document.querySelectorAll('input, select, textarea').forEach(field => {
+            field.addEventListener('invalid', function(e) {
+                e.preventDefault();
+                this.classList.add('error');
+            });
+            field.addEventListener('input', function() {
+                if (this.checkValidity()) {
+                    this.classList.remove('error');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
