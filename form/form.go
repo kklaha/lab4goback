@@ -70,7 +70,7 @@ func FormHandler(db *sql.DB) http.HandlerFunc {
 			},
 		})
 
-		tmpl, err := tmpl.ParseFiles("/home/u82188/www/lab3/html/index.html")
+		tmpl, err := tmpl.ParseFiles("/home/u82188/www/lab4/html/index.html")
 		if err != nil {
 			http.Error(w, "Template parse error: "+err.Error(), http.StatusInternalServerError)
 			return
