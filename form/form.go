@@ -9,6 +9,7 @@ import (
 	"lab4back/validation"
 	"log"
 	"net/http"
+	"os"
 	"time"
 )
 
@@ -59,6 +60,11 @@ func ParseForm(r *http.Request) (models.Form, map[string]string) {
 }
 func FormHandler(db *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		redirectPath := os.Getenv("SCRIPT_NAME")
+		if redirectPath == "" {
+			redirectPath = "/lab4/cgi-bin/cookie.cgi"
+
+		}
 		tmpl := template.New("index.html").Funcs(template.FuncMap{
 			"contains": func(slice []string, item string) bool {
 				for _, s := range slice {
@@ -104,7 +110,7 @@ func FormHandler(db *sql.DB) http.HandlerFunc {
 				if err := cookie.SaveDataToCookies(w, data); err != nil {
 					log.Printf("save data cookie: %v", err)
 				}
-				http.Redirect(w, r, r.URL.Path, http.StatusSeeOther)
+				http.Redirect(w, r, redirectPath, http.StatusSeeOther)
 				return
 			}
 			if err := datab.SaveToDB(db, data); err != nil {
@@ -114,7 +120,7 @@ func FormHandler(db *sql.DB) http.HandlerFunc {
 			}
 			cookie.DeleteCookie(w, "form_data")
 			cookie.DeleteCookie(w, "form_errors")
-			http.Redirect(w, r, "/?saved=1", http.StatusSeeOther)
+			http.Redirect(w, r, redirectPath+"?saved=1", http.StatusSeeOther)
 			return
 		}
 	}

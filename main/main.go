@@ -34,10 +34,14 @@ func loadEnv(filename string) {
 }
 
 func main() {
-	loadEnv("/home/u82188/www/lab3/cgi-bin/.env")
+	loadEnv("/home/u82188/www/lab4/cgi-bin/.env")
 
 	DB, err := datab.ConnectToDB()
 	if err != nil {
+		fmt.Println("Status: 500 Internal Server Error")
+		fmt.Println("Content-Type: text/plain; charset=utf-8")
+		fmt.Println()
+		fmt.Printf("DB connection failed: %v\n", err)
 		return
 	}
 	defer DB.Close()
