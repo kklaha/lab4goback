@@ -333,19 +333,5 @@
             <button type="submit">💾 Сохранить</button>
         </form>
     </div>
-
-    <script>
-        document.querySelectorAll('input, select, textarea').forEach(field => {
-            field.addEventListener('invalid', function(e) {
-                e.preventDefault();
-                this.classList.add('error');
-            });
-            field.addEventListener('input', function() {
-                if (this.checkValidity()) {
-                    this.classList.remove('error');
-                }
-            });
-        });
-    </script>
 </body>
 </html>
